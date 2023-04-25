@@ -1,0 +1,93 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+.wrapper {
+  width: 840px;
+  margin: 0 auto;
+}
+.textarea {
+  width: calc(100% - 2px);
+  height: 300px;
+}
+.key-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  background-color: gray;
+  padding: 10px;
+}
+
+div[class^="Key"],
+div[class^="Digit"],
+.Backquote,
+.ArrowUp,
+.ArrowDown,
+.ArrowLeft,
+.ArrowRight,
+.Minus,
+.Equal,
+.Semicolon,
+.Quote,
+.BracketLeft,
+.BracketRight,
+.Backslash,
+.Comma,
+.Period,
+.Slash,
+.Delete,
+.Tab,
+.ControlLeft,
+.AltLeft,
+.MetaLeft,
+.ControlRight,
+.AltRight {
+  background-color: brown;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  border-radius: 5px;
+}
+.Backspace,
+.Tab,
+.CapsLock,
+.Enter,
+.ShiftLeft,
+.ShiftRight,
+.AltLeft,
+.AltRight,
+.MetaLeft,
+.ControlLeft,
+.ControlRight,
+.Delete,
+.Space {
+  background-color: aqua;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  border-radius: 5px;
+}
+
+.Backspace,
+.CapsLock,
+.Enter,
+.ShiftLeft,
+.ShiftRight,
+.Space {
+  width: 100px;
+  flex-grow: 1;
+}
+.key-container > *:hover {
+  background-color: aquamarine;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.rus,
+.capsrus,
+.capseng {
+  display: none;
+}
