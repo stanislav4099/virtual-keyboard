@@ -11,7 +11,7 @@ export default class Key {
     const DIV = document.createElement('div');
     DIV.classList.add(`${this.eventCode}`);
     Object.keys(this)
-      .slice(1)
+      .slice(2)
       .forEach((e) => {
         const SPAN = document.createElement('span');
         SPAN.innerHTML = `${this[e]}`;

@@ -9,6 +9,40 @@ import {
 
 const BODY = document.querySelector('body');
 const NUMBER_OF_KEYS = 64;
+let keyArr = null;
+let key = null;
+
+const animEnd = (e) => {
+  if (e.type === 'mouseup') {
+    key.classList.remove('key-animation');
+    window.removeEventListener('mouseup', animEnd);
+  } else if (e.type === 'keyup') {
+    const KEY_CODE = e.code;
+    keyArr.forEach((element) => {
+      if (element.classList.contains(`${KEY_CODE}`)) {
+        element.classList.remove('key-animation');
+      }
+    });
+  }
+};
+
+const keyAnimation = (e) => {
+  if (e.type === 'mousedown') {
+    key = e.target.closest('div');
+    if (key.classList.contains('key-container')) {
+      return;
+    }
+    key.classList.add('key-animation');
+    window.addEventListener('mouseup', animEnd);
+  } else if (e.type === 'keydown') {
+    const KEY_CODE = e.code;
+    [key] = keyArr.filter((element) => element.className === KEY_CODE);
+    if (!key) {
+      return;
+    }
+    key.classList.add('key-animation');
+  }
+};
 
 const createKeyBoardComponent = () => {
   const KEY_ARR = new Array(NUMBER_OF_KEYS).fill(null);
@@ -38,5 +72,12 @@ const createKeyBoardComponent = () => {
   WRAPPER.append(KEY_CONTAINER);
 
   BODY.append(WRAPPER);
+
+  keyArr = [...KEY_CONTAINER.childNodes];
+
+  KEY_CONTAINER.addEventListener('mousedown', keyAnimation);
+  window.addEventListener('keydown', keyAnimation);
+  window.addEventListener('keyup', animEnd);
 };
+
 createKeyBoardComponent();
