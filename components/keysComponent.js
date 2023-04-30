@@ -1,5 +1,6 @@
 export default class Key {
-  constructor(eventCode, rus, capsrus, eng, capseng) {
+  constructor(defaultLanguage, eventCode, rus, capsrus, eng, capseng) {
+    this.defaultLanguage = defaultLanguage;
     this.eventCode = eventCode;
     this.rus = rus;
     this.eng = eng;
@@ -16,6 +17,9 @@ export default class Key {
         const SPAN = document.createElement('span');
         SPAN.innerHTML = `${this[e]}`;
         SPAN.classList.add(`${e}`);
+        if (e !== this.defaultLanguage) {
+          SPAN.classList.add('none');
+        }
         DIV.append(SPAN);
       });
 

@@ -92,12 +92,6 @@ div[class^="Digit"],
   transition: all 0.2s !important;
 }
 
-.rus,
-.capsrus,
-.capseng {
-  display: none;
-}
-
 .none {
   display: none;
 }
