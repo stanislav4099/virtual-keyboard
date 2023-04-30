@@ -10,6 +10,9 @@
   width: calc(100% - 2px);
   height: 300px;
 }
+.textarea:focus-visible{
+  outline: none;
+}
 .key-container {
   display: flex;
   flex-wrap: wrap;

@@ -21,17 +21,17 @@ const EXIT_KEY = [
 let keyArr = null;
 let key = null;
 let textArea = null;
-let defaultLanguage = 'eng';
+let defaultLanguage = localStorage.getItem('lang') || "eng";
 let carriageLocation = 0;
 let inputKeyboard = false;
 let isShift = false;
 let shiftDown = false;
+let classNameArr = null;
 
 const enterInTextArea = () => {
   const TEXT_ARR = [...textArea.value];
 
-  if (inputKeyboard
-    || EXIT_KEY.includes(`${key.classList[0]}`)) {
+  if (EXIT_KEY.includes(`${key.classList[0]}`)) {
     return;
   }
   if (key.classList.contains('Backspace')) {
@@ -62,6 +62,7 @@ const enterInTextArea = () => {
     textArea.value = TEXT_ARR.join('');
     carriageLocation += 1;
   } else {
+    console.log(carriageLocation)
     key.childNodes.forEach((e) => {
       if (!e.classList.contains('none')) {
         textArea.value = '';
@@ -70,7 +71,9 @@ const enterInTextArea = () => {
         carriageLocation += e.innerHTML.length;
       }
     });
+    
   }
+  textArea.setSelectionRange(carriageLocation, carriageLocation);
 };
 
 const switchingLanguage = () => {
@@ -166,6 +169,12 @@ const animEnd = (e) => {
 };
 
 const keyAnimation = (e) => {
+  e.preventDefault();
+  
+  if(!classNameArr.includes(`${e.code}`)){
+    return
+  }
+
   if (
     ((e.code === 'AltLeft'
     || e.code === 'AltRight') && e.ctrlKey)
@@ -177,6 +186,7 @@ const keyAnimation = (e) => {
     } else {
       defaultLanguage = 'eng';
     }
+    localStorage.setItem('lang', defaultLanguage);
     switchingLanguage();
   }
   if (e.type === 'mousedown') {
@@ -191,9 +201,6 @@ const keyAnimation = (e) => {
   if (CHANGE_REGISTER_BUTTONS.includes(`${key.classList[0]}`)) {
     ShiftCapsAnimHadler();
     return;
-  }
-  if (!inputKeyboard) {
-    e.preventDefault();
   }
   key.classList.add('key-animation');
   enterInTextArea(key);
@@ -231,15 +238,12 @@ const createKeyBoardComponent = () => {
   BODY.append(WRAPPER);
 
   keyArr = [...KEY_CONTAINER.childNodes];
+  classNameArr = keyArr.map(e => e.className)
 
   KEY_CONTAINER.addEventListener('mousedown', keyAnimation);
-  TEXTAERA.addEventListener('focus', () => {
-    inputKeyboard = true;
-  });
-  TEXTAERA.addEventListener('blur', () => {
-    inputKeyboard = false;
+  TEXTAERA.addEventListener("click", () => {
     carriageLocation = TEXTAERA.selectionStart;
-  });
+  })
   window.addEventListener('keydown', keyAnimation);
   window.addEventListener('keyup', animEnd);
 };
