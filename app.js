@@ -17,76 +17,18 @@ const EXIT_KEY = [
   'ControlRight',
   'MetaLeft',
 ];
+const MOUSE_SHIFT_KEY = ['Space', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
 
 let keyArr = null;
 let key = null;
+let mouseKey = null;
 let textArea = null;
-let defaultLanguage = localStorage.getItem('lang') || "eng";
+let defaultLanguage = localStorage.getItem('lang') || 'eng';
 let carriageLocation = 0;
-let inputKeyboard = false;
 let isShift = false;
 let shiftDown = false;
-let classNameArr = null;
-
-const enterInTextArea = () => {
-  const TEXT_ARR = [...textArea.value];
-
-  if (EXIT_KEY.includes(`${key.classList[0]}`)) {
-    return;
-  }
-  if (key.classList.contains('Backspace')) {
-    const TEMP_KEY = TEXT_ARR[carriageLocation - 1];
-    if (!TEMP_KEY) {
-      return;
-    }
-    textArea.value = '';
-    TEXT_ARR.splice(carriageLocation - 1, 1);
-    textArea.value = TEXT_ARR.join('');
-    carriageLocation -= TEMP_KEY.length;
-  } else if (key.classList.contains('Delete')) {
-    const TEMP_KEY = TEXT_ARR[carriageLocation];
-    if (!TEMP_KEY) {
-      return;
-    }
-    textArea.value = '';
-    TEXT_ARR.splice(carriageLocation, 1);
-    textArea.value = TEXT_ARR.join('');
-  } else if (key.classList.contains('Tab')) {
-    textArea.value = '';
-    TEXT_ARR.splice(carriageLocation, 0, '  ');
-    textArea.value = TEXT_ARR.join('');
-    carriageLocation += 2;
-  } else if (key.classList.contains('Enter')) {
-    textArea.value = '';
-    TEXT_ARR.splice(carriageLocation, 0, '\n');
-    textArea.value = TEXT_ARR.join('');
-    carriageLocation += 1;
-  } else {
-    console.log(carriageLocation)
-    key.childNodes.forEach((e) => {
-      if (!e.classList.contains('none')) {
-        textArea.value = '';
-        TEXT_ARR.splice(carriageLocation, 0, e.innerHTML);
-        textArea.value = TEXT_ARR.join('');
-        carriageLocation += e.innerHTML.length;
-      }
-    });
-    
-  }
-  textArea.setSelectionRange(carriageLocation, carriageLocation);
-};
-
-const switchingLanguage = () => {
-  keyArr.forEach((e) => {
-    e.childNodes.forEach((i) => {
-      if (i.classList.contains(`${defaultLanguage}`)) {
-        i.classList.remove('none');
-      } else {
-        i.classList.add('none');
-      }
-    });
-  });
-};
+let mouseShiftDown = false;
+let mouseShiftDown2 = false;
 
 const shiftAndCapsHandler = () => {
   if (!isShift) {
@@ -116,6 +58,90 @@ const shiftAndCapsHandler = () => {
   }
 };
 
+const enterInTextArea = (keys) => {
+  const TEXT_ARR = [...textArea.value];
+
+  if (EXIT_KEY.includes(`${keys.classList[0]}`)) {
+    return;
+  }
+  if (keys.classList.contains('Backspace')) {
+    const TEMP_KEY = TEXT_ARR[carriageLocation - 1];
+    if (!TEMP_KEY) {
+      return;
+    }
+    textArea.value = '';
+    TEXT_ARR.splice(carriageLocation - 1, 1);
+    textArea.value = TEXT_ARR.join('');
+    carriageLocation -= TEMP_KEY.length;
+  } else if (keys.classList.contains('Delete')) {
+    const TEMP_KEY = TEXT_ARR[carriageLocation];
+    if (!TEMP_KEY) {
+      return;
+    }
+    textArea.value = '';
+    TEXT_ARR.splice(carriageLocation, 1);
+    textArea.value = TEXT_ARR.join('');
+  } else if (keys.classList.contains('Tab')) {
+    textArea.value = '';
+    TEXT_ARR.splice(carriageLocation, 0, '  ');
+    textArea.value = TEXT_ARR.join('');
+    carriageLocation += 2;
+  } else if (keys.classList.contains('Enter')) {
+    textArea.value = '';
+    TEXT_ARR.splice(carriageLocation, 0, '\n');
+    textArea.value = TEXT_ARR.join('');
+    carriageLocation += 1;
+  } else {
+    keys.childNodes.forEach((e) => {
+      if (!e.classList.contains('none')) {
+        textArea.value = '';
+        TEXT_ARR.splice(carriageLocation, 0, e.innerHTML);
+        textArea.value = TEXT_ARR.join('');
+        carriageLocation += e.innerHTML.length;
+      }
+    });
+    if (mouseShiftDown2
+      && !MOUSE_SHIFT_KEY.includes(`${keys.classList[0]}`)) {
+      shiftAndCapsHandler();
+      const S_LEFT = document.querySelector('.ShiftLeft');
+      const S_RIGHT = document.querySelector('.ShiftRight');
+      S_LEFT.classList.remove('key-animation');
+      S_RIGHT.classList.remove('key-animation');
+      mouseShiftDown2 = false;
+      shiftDown = !shiftDown;
+    }
+  }
+
+  textArea.setSelectionRange(carriageLocation, carriageLocation);
+};
+
+const switchingLanguage = () => {
+  keyArr.forEach((e) => {
+    e.childNodes.forEach((i) => {
+      if (i.classList.contains(`${defaultLanguage}`)) {
+        i.classList.remove('none');
+      } else {
+        i.classList.add('none');
+      }
+    });
+  });
+};
+
+const shiftCapsAnimHadlerMouse = () => {
+  if (mouseKey.classList.contains('CapsLock')) {
+    mouseKey.classList.toggle('key-animation');
+    shiftAndCapsHandler();
+    return;
+  }
+  const S_LEFT = document.querySelector('.ShiftLeft');
+  const S_RIGHT = document.querySelector('.ShiftRight');
+  S_LEFT.classList.toggle('key-animation');
+  S_RIGHT.classList.toggle('key-animation');
+  shiftAndCapsHandler();
+  shiftDown = !shiftDown;
+  mouseShiftDown2 = true;
+};
+
 const ShiftCapsEndAnimHadler = () => {
   if (
     key.classList.contains('ShiftLeft')
@@ -127,6 +153,8 @@ const ShiftCapsEndAnimHadler = () => {
     S_RIGHT.classList.remove('key-animation');
     shiftAndCapsHandler();
     shiftDown = !shiftDown;
+    mouseShiftDown = false;
+    mouseShiftDown2 = false;
   } else if (key.classList.contains('CapsLock')) {
     key.classList.toggle('key-animation');
     shiftAndCapsHandler();
@@ -148,33 +176,47 @@ const ShiftCapsAnimHadler = () => {
     S_RIGHT.classList.add('key-animation');
     shiftAndCapsHandler();
     shiftDown = !shiftDown;
+    mouseShiftDown = true;
   }
 };
 
 const animEnd = (e) => {
   if (e.type === 'mouseup') {
     window.removeEventListener('mouseup', animEnd);
-  } else if (e.type === 'keyup') {
+    if (CHANGE_REGISTER_BUTTONS.includes(`${mouseKey.classList[0]}`)) {
+      return;
+    }
+    mouseKey.classList.remove('key-animation');
+    return;
+  }
+  if (e.type === 'keyup') {
     keyArr.forEach((element) => {
       if (element.classList.contains(`${e.code}`)) {
         key = element;
       }
     });
   }
+  if (!key) {
+    return;
+  }
   if (CHANGE_REGISTER_BUTTONS.includes(`${key.classList[0]}`)) {
+    if (mouseShiftDown2 && !key.classList.contains('CapsLock')) {
+      return;
+    }
     ShiftCapsEndAnimHadler();
     return;
   }
+
   key.classList.remove('key-animation');
 };
 
 const keyAnimation = (e) => {
   e.preventDefault();
-  
-  if(!classNameArr.includes(`${e.code}`)){
-    return
+  if ((e.code === 'ShiftLeft'
+  || e.code === 'ShiftRight')
+  && shiftDown) {
+    return;
   }
-
   if (
     ((e.code === 'AltLeft'
     || e.code === 'AltRight') && e.ctrlKey)
@@ -190,13 +232,29 @@ const keyAnimation = (e) => {
     switchingLanguage();
   }
   if (e.type === 'mousedown') {
-    key = e.target.closest('div');
-    if (key.classList.contains('key-container')) {
+    mouseKey = e.target.closest('div');
+    if (mouseKey.classList.contains('key-container')) {
+      return;
+    }
+    if ((mouseKey.classList.contains('ShiftLeft')
+    || mouseKey.classList.contains('ShiftRight'))
+    && mouseShiftDown) {
       return;
     }
     window.addEventListener('mouseup', animEnd);
-  } else if (e.type === 'keydown') {
+    if (CHANGE_REGISTER_BUTTONS.includes(`${mouseKey.classList[0]}`)) {
+      shiftCapsAnimHadlerMouse();
+      return;
+    }
+    mouseKey.classList.add('key-animation');
+    enterInTextArea(mouseKey);
+    return;
+  }
+  if (e.type === 'keydown') {
     [key] = keyArr.filter((element) => element.classList.contains(`${e.code}`));
+  }
+  if (!key) {
+    return;
   }
   if (CHANGE_REGISTER_BUTTONS.includes(`${key.classList[0]}`)) {
     ShiftCapsAnimHadler();
@@ -238,12 +296,11 @@ const createKeyBoardComponent = () => {
   BODY.append(WRAPPER);
 
   keyArr = [...KEY_CONTAINER.childNodes];
-  classNameArr = keyArr.map(e => e.className)
 
   KEY_CONTAINER.addEventListener('mousedown', keyAnimation);
-  TEXTAERA.addEventListener("click", () => {
+  TEXTAERA.addEventListener('click', () => {
     carriageLocation = TEXTAERA.selectionStart;
-  })
+  });
   window.addEventListener('keydown', keyAnimation);
   window.addEventListener('keyup', animEnd);
 };
