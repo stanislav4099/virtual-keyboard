@@ -99,3 +99,8 @@ div[class^="Digit"],
 .none {
   display: none;
 }
+
+p{
+  margin: 5px;
+  text-align: center;
+}
