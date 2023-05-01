@@ -290,8 +290,12 @@ const createKeyBoardComponent = () => {
 
   KEY_ARR.forEach((e) => KEY_CONTAINER.append(e.createKeyComponent()));
 
+  const P = document.createElement('p');
+  P.innerHTML = 'Клавиатура создана в операционной системе Windows Для переключения языка комбинация: левыe ctrl + alt';
+
   WRAPPER.append(TEXTAERA);
   WRAPPER.append(KEY_CONTAINER);
+  WRAPPER.append(P);
 
   BODY.append(WRAPPER);
 
